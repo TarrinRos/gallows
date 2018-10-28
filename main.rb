@@ -1,31 +1,25 @@
-# encoding: utf-8
-# XXX/ Этот код необходим только при использовании русских букв на Windows
-if (Gem.win_platform?)
-  Encoding.default_external = Encoding.find(Encoding.locale_charmap)
-  Encoding.default_internal = __ENCODING__
+require_relative 'lib/game'
+require_relative 'lib/result_printer'
 
-  [STDIN, STDOUT].each do |io|
-    io.set_encoding(Encoding.default_external, Encoding.default_internal)
-  end
+VERSION = "Игра 'Виселица' v.5.0.1"
+
+current_path = File.dirname(__FILE__)
+
+file_name = "#{current_path}/data/words.txt"
+
+if File.exists?(file_name)
+  word = File.readlines(file_name).sample.strip
+else
+  nil
 end
-# /XXX
 
-require_relative "game"
-require_relative "result_printer"
-require_relative "word_reader"
+game = Game.new(word)
 
+game.version = VERSION
 
-printer = ResultPrinter.new
+printer = ResultPrinter.new(game, current_path)
 
-reader = WordReader.new
-
-slovo = reader.read_from_file('./data/words.txt')
-
-puts slovo
-
-game = Game.new(slovo)
-
-while game.status == 0 do
+while game.in_progress? do
   printer.print_status(game)
   game.ask_next_letter
 end

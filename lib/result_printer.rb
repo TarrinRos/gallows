@@ -1,11 +1,10 @@
 class ResultPrinter
-  def initialize
+  def initialize(game, current_path)
     @status_image = []
 
-    current_path = File.dirname(__FILE__)
     counter = 0
-    while counter <= 7 do
-      file_name = current_path + "/image/#{counter}.txt"
+    while counter <= game.max_errors do
+      file_name =  "#{current_path}/image/#{counter}.txt"
 
       if File.exists?(file_name)
         f = File.new(file_name, 'r')
@@ -21,21 +20,20 @@ class ResultPrinter
   def print_status(game)
     # Вызывает метод cls для очистки экрана
     cls
+    puts game.version
     puts "\nСлово: " + get_word_for_print(game.letters, game.good_letters)
 
     puts "Ошибки: (#{game.errors}): #{game.bad_letters.join(", ")}"
 
     print_viselica(game.errors)
 
-    if game.errors >= 7
+    if game.lost?
       puts 'Вы проиграли:('
-      puts "Загаданное слово было: #{game.letters.inspect}"
+      puts "Загаданное слово было: #{game.letters.join}"
+    elsif game.won?
+      puts "Поздравляем! Вы выиграли!\n\n"
     else
-      if (game.letters - game.good_letters).empty?
-        puts "Поздравляем! Вы выиграли!\n\n"
-      else
-        puts "У Вас осталось попыток: " + (7-game.errors).to_s
-      end
+      puts "У Вас осталось попыток: #{game.errors_left}"
     end
   end
 
@@ -49,7 +47,7 @@ class ResultPrinter
         result += "__ "
       end
     end
-      result
+    result
   end
 
   def cls
