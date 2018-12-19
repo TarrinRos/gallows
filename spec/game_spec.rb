@@ -1,5 +1,4 @@
-require 'rspec'
-require_relative '../lib/game'
+require 'game'
 require 'unicode_utils/downcase'
 
 describe Game do
@@ -18,21 +17,21 @@ describe Game do
   end
 
   describe '#next_step' do
-    it 'should set @status == :won, when all letters are correct' do
+    it 'sets @status == :won, when all letters are correct' do
       %w(a t b m n).each do |letter|
         @game.next_step(letter)
       end
       expect(@game.status).to eq :won
     end
 
-    it 'should set @status == :lost, when @errors >= MAX_ERRORS' do
+    it 'sets @status == :lost, when @errors >= MAX_ERRORS' do
       %w(s w j k o p d).each do |letter|
         @game.next_step(letter)
       end
       expect(@game.status).to eq :lost
     end
 
-    it 'should keep @status == :in_progress, when @errors < MAX_ERRORS' do
+    it 'keeps @status == :in_progress, when @errors < MAX_ERRORS' do
       %w(s w j k o p).each do |letter|
         @game.next_step(letter)
       end
